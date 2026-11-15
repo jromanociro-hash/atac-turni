@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#17131d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ATAC Turni">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>ATAC Turni</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">A</div><div><strong>ATAC Turni</strong><small>Il tuo servizio, sotto controllo</small></div></div>
+      <button class="icon-btn" id="installHint" aria-label="Installa app">＋</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">PROSSIMO SERVIZIO</div>
+        <div class="hero-main"><div><div id="nextDate" class="hero-date">Nessun turno inserito</div><div id="nextCode" class="hero-code">Aggiungi il tuo primo turno</div></div><div class="hero-icon">🚌</div></div>
+        <div class="hero-stats">
+          <div><span>Inizio turno</span><b id="nextStart">—</b></div>
+          <div><span>Capolinea</span><b id="nextTerminal">—</b></div>
+          <div><span>Partenza casa</span><b id="nextLeave">—</b></div>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="Sezioni">
+        <button class="tab active" data-tab="home">Oggi</button>
+        <button class="tab" data-tab="calendar">Calendario</button>
+        <button class="tab" data-tab="stats">Statistiche</button>
+        <button class="tab" data-tab="settings">Impostazioni</button>
+      </nav>
+
+      <section id="home" class="view active">
+        <div class="section-heading"><div><div class="eyebrow">PANORAMICA</div><h2>Il tuo mese</h2></div><button class="soft-btn" id="addShiftTop">＋ Turno</button></div>
+        <div class="quick-grid">
+          <article class="metric"><span>Ore mese</span><strong id="monthHours">0h 00m</strong><small>Turni definitivi</small></article>
+          <article class="metric"><span>Giorni lavorati</span><strong id="workDays">0</strong><small>Nel mese corrente</small></article>
+          <article class="metric"><span>Riposi</span><strong id="restDays">0</strong><small>Registrati</small></article>
+          <article class="metric"><span>Permessi 104</span><strong id="leaveDays">0</strong><small>Registrati</small></article>
+        </div>
+        <div class="panel">
+          <div class="section-heading compact"><h3>Prossimi impegni</h3><span class="muted" id="upcomingCount">0 turni</span></div>
+          <div id="upcomingList" class="shift-list empty">Ancora nessun turno. Premi “＋ Turno” per iniziare.</div>
+        </div>
+        <div class="notice"><span>ⓘ</span><p>Questa prima versione salva i dati su questo dispositivo. La sincronizzazione automatica con il portale ATAC verrà collegata dopo aver completato e verificato il motore di lettura.</p></div>
+      </section>
+
+      <section id="calendar" class="view">
+        <div class="section-heading"><div><div class="eyebrow">PIANIFICAZIONE</div><h2>Calendario turni</h2></div><button class="soft-btn" id="addShiftCal">＋ Turno</button></div>
+        <div class="month-nav"><button class="icon-btn" id="prevMonth">‹</button><strong id="monthLabel"></strong><button class="icon-btn" id="nextMonth">›</button></div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="legend"><span><i class="dot work"></i> Lavoro</span><span><i class="dot rest"></i> Riposo</span><span><i class="dot leave"></i> 104</span><span><i class="dot provisional"></i> VP</span></div>
+        <div class="panel"><h3 id="selectedDateLabel">Seleziona un giorno</h3><div id="selectedDayList" class="shift-list empty">Nessun turno selezionato.</div></div>
+      </section>
+
+      <section id="stats" class="view">
+        <div class="eyebrow">RIEPILOGO</div><h2>Le tue statistiche</h2>
+        <div class="quick-grid">
+          <article class="metric"><span>Ore mese</span><strong id="statsMonthHours">0h 00m</strong></article>
+          <article class="metric"><span>Turni</span><strong id="statsShifts">0</strong></article>
+          <article class="metric"><span>Riposi</span><strong id="statsRest">0</strong></article>
+          <article class="metric"><span>104</span><strong id="stats104">0</strong></article>
+        </div>
+        <div class="panel"><h3>Settimana corrente</h3><div class="stat-line"><span>Ore lavorate</span><b id="weekHours">0h 00m</b></div><div class="stat-line"><span>Giorni lavorati</span><b id="weekDays">0</b></div></div>
+        <p class="muted small">Le statistiche escludono i turni VP provvisori finché non vengono confermati.</p>
+      </section>
+
+      <section id="settings" class="view">
+        <div class="eyebrow">PERSONALIZZAZIONE</div><h2>Impostazioni</h2>
+        <div class="panel form-panel">
+          <label>Minuti di anticipo sull'inizio servizio<input id="arrivalBuffer" type="number" min="0" max="120" value="20"></label>
+          <label>Durata viaggio predefinita (minuti)<input id="travelDefault" type="number" min="0" max="300" value="66"></label>
+          <label>Capolinea predefinito<input id="defaultTerminal" placeholder="Es. GRO – Grottarossa"></label>
+          <button class="primary-btn" id="saveSettings">Salva impostazioni</button>
+        </div>
+        <div class="panel">
+          <h3>Dati e backup</h3><p class="muted small">Esporta una copia dei turni oppure importa un backup JSON.</p>
+          <div class="button-row"><button class="soft-btn" id="exportData">Esporta backup</button><label class="soft-btn file-label">Importa backup<input id="importData" type="file" accept="application/json"></label></div>
+          <button class="danger-btn" id="clearData">Cancella tutti i dati</button>
+        </div>
+        <div class="notice"><span>🔒</span><p>Non inserire qui la password ATAC. Le credenziali non sono ancora richieste da questa versione. La futura sincronizzazione dovrà gestirle lato server in modo protetto.</p></div>
+      </section>
+    </main>
+    <button class="floating-add" id="floatingAdd" aria-label="Aggiungi turno">＋</button>
+  </div>
+
+  <dialog id="shiftDialog">
+    <form method="dialog" id="shiftForm">
+      <div class="dialog-head"><div><div class="eyebrow">NUOVO SERVIZIO</div><h2 id="dialogTitle">Aggiungi turno</h2></div><button class="icon-btn" value="cancel" aria-label="Chiudi">×</button></div>
+      <label>Data<input id="shiftDate" type="date" required></label>
+      <label>Tipo<select id="shiftType"><option value="work">Turno di lavoro</option><option value="rest">Riposo (RS)</option><option value="104">Permesso Legge 104</option><option value="vp">VP provvisorio</option><option value="other">Altro permesso</option></select></label>
+      <div class="form-row"><label>Inizio<input id="shiftStart" type="time"></label><label>Fine<input id="shiftEnd" type="time"></label></div>
+      <label>Capolinea / sigla<input id="shiftTerminal" placeholder="Es. GRO"></label>
+      <label>Note<input id="shiftNotes" placeholder="Facoltative"></label>
+      <div class="button-row"><button type="button" class="danger-btn hidden" id="deleteShift">Elimina</button><span class="spacer"></span><button type="button" class="soft-btn" id="cancelDialog">Annulla</button><button type="submit" class="primary-btn">Salva turno</button></div>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
